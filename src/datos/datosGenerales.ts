@@ -45,10 +45,8 @@ export const datosLogo = {
     ],
   };
   
-  
-  
-  
   export const datosContacto = {
+    nombreProyecto: "Synergy Studio",
     email: "contacto@synergystudio.com",
     telefono: "+54 9 11 1234-5678",
     direccion: "Buenos Aires, Argentina",

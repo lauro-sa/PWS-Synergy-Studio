@@ -1,18 +1,19 @@
 "use client";
 
-import { fotosGaleria01 } from "@/datos/datosGaleria";
 import Image from "next/image";
 import { useState } from "react";
 import ModalImagen from "./ModalImagen";
 import { motion } from "framer-motion";
+import { animacionGaleria } from "@/utils/animaciones";
+import { fotosGaleria01 } from "@/datos/datosGaleria";
 
-export default function Galeria() {
+export default function GaleriaFotografia() {
   const [imagenSeleccionada, setImagenSeleccionada] = useState<string | null>(null);
   const [datosImagen, setDatosImagen] = useState<{ titulo: string; detalles: string; informacion?: string } | null>(null);
 
   return (
-    <section className="w-full px-2 py-6">
-      <h2 className="text-lg md:text-xl font-bold text-center mt-12 mb-4">{fotosGaleria01.titulo}</h2>
+    <section className="w-full max-w-5xl mx-auto px-2 py-6">
+      <h2 className="text-h2 font-bold text-center mt-10">📸 Fotografía</h2>
 
       <div className="grid grid-cols-3 md:grid-cols-4 2xl:grid-cols-6 gap-1 md:gap-2">
         {fotosGaleria01.imagenes.map((foto, index) => (
@@ -24,35 +25,36 @@ export default function Galeria() {
               setDatosImagen({
                 titulo: foto.titulo,
                 detalles: foto.detalles,
-                informacion: foto.informacion,
+                informacion: foto.informacion ?? "No hay información adicional disponible.",
               });
             }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, delay: index * 0.1, ease: "easeOut" }}
+            variants={animacionGaleria}
+            initial="inicial"
+            animate="visible"
+            custom={index}
           >
-            {/* Agrega el atributo priority a las imágenes importantes */}
+            {/* Imagen con efecto blanco y negro y hover */}
             <Image
-              key={foto.id}
               src={foto.url}
               alt={foto.titulo}
               fill
-              priority={index === 0} // Marca como prioritaria solo la primera imagen
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover rounded shadow-sm"
+              priority={index === 0}
+              className="object-cover rounded shadow-sm transition-transform duration-300 hover:scale-105 
+                         grayscale group-hover:grayscale-0 transition-all duration-500 ease-in-out"
             />
 
-            {/* Filtro degradado */}
-            <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-black/95 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            {/* Detalles técnicos */}
-            <div className="absolute bottom-1 left-1 w-full text-start text-grisClaro/80 text-[10px] opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+            {/* Gradiente en la parte inferior */}
+            <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            {/* Detalles de la imagen (Aparecen en hover) */}
+            <div className="absolute bottom-1 left-1 w-full text-start text-gray-300 text-[10px] opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
               {foto.detalles}
             </div>
           </motion.div>
         ))}
       </div>
 
-
+      {/* Modal para ver la imagen en detalle */}
       {imagenSeleccionada && datosImagen && (
         <ModalImagen
           foto={imagenSeleccionada}

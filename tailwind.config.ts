@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import { Config } from "tailwindcss";
 
 export default {
   content: [
@@ -9,16 +9,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        fondoClaro: "#ffffff",  // Fondo en modo claro
-        fondoOscuro: "#111111", // Fondo en modo oscuro (como en Next.js)
-        textoClaro: "#000000",  // Texto en modo claro
-        textoOscuro: "#ffffff", // Texto en modo oscuro
-        grisClaro: "#e5e7eb",   // Detalles en claro
-        grisOscuro: "#4b5563",  // Detalles en oscuro
-        acento: "#6366f1",      // Color de acento
+        fondoClaro: "#ffffff",
+        fondoOscuro: "#111111",
+        textoClaro: "#000000",
+        textoOscuro: "#ffffff",
+        grisClaro: "#e5e7eb",
+        grisOscuro: "#4b5563",
+        acento: "#6366f1",
+      },
+      fontSize: {
+        h1: "2.25rem", // 36px
+        h2: "1.875rem", // 30px
+        h3: "1.5rem", // 24px
+        p: "1rem", // 16px
+        sm: "0.875rem", // 14px
+      },
+      spacing: {
+        sectionPadding: "10rem", // Espaciado uniforme para secciones
       },
     },
   },
-  darkMode: "class", // Habilita el modo oscuro con clases
+  darkMode: "class",
   plugins: [],
 } satisfies Config;
