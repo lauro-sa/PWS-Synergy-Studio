@@ -12,10 +12,9 @@ export default function GaleriaFotografia() {
   const [datosImagen, setDatosImagen] = useState<{ titulo: string; detalles: string; informacion?: string } | null>(null);
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-2 py-6">
-      <h2 className="text-h2 font-bold text-center mt-10">📸 Fotografía</h2>
-
-      <div className="grid grid-cols-3 md:grid-cols-4 2xl:grid-cols-6 gap-1 md:gap-2">
+    <section className="w-full py-1">
+      {/* Manteniendo la cantidad de columnas y ajustando las imágenes */}
+      <div className="grid grid-cols-3 md:grid-cols-4 2xl:grid-cols-6 gap-1 md:gap-2 w-full">
         {fotosGaleria01.imagenes.map((foto, index) => (
           <motion.div
             key={foto.id}
@@ -39,7 +38,7 @@ export default function GaleriaFotografia() {
               alt={foto.titulo}
               fill
               priority={index === 0}
-              className="object-cover rounded shadow-sm transition-transform duration-300 hover:scale-105 
+              className="w-full h-full object-cover rounded shadow-sm transition-transform duration-300 hover:scale-105 
                          grayscale group-hover:grayscale-0 transition-all duration-500 ease-in-out"
             />
 

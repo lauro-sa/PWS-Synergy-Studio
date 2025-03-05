@@ -26,9 +26,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased bg-white text-black dark:bg-[#111] dark:text-white">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-dvh">
             <Header />
-            <main className="flex-grow flex">{children}</main>
+            <main className="border flex-grow flex items-center justify-center px-4 mt-14 md:mt-16">
+              {children}
+            </main>
             <Footer />
           </div>
         </ThemeProvider>
@@ -36,3 +38,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+

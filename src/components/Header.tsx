@@ -8,6 +8,32 @@ import { useTheme } from "next-themes";
 import { motion } from "framer-motion"; // Animaciones
 import { datosLogo } from "@/datos/datosGenerales";
 
+// Animación del título del sitio
+const animacionTitulo = {
+  hidden: { width: 0 },
+  visible: {
+    width: "auto",
+    transition: { duration: 1.5, ease: "easeInOut" },
+  },
+};
+
+// Función para que cada letra de los enlaces se escriba una tras otra SIN superposición
+const animacionEscribir = (inicio: number) => ({
+  hidden: { opacity: 1 },
+  visible: {
+    transition: {
+      delayChildren: inicio, // 🔹 Comienza después de que termine el enlace anterior
+      staggerChildren: 0.04, // 🔹 Velocidad de escritura por letra
+    },
+  },
+});
+
+// Variante para cada letra
+const letra = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
 export default function Header() {
   const { theme, systemTheme } = useTheme();
   const [temaActual, setTemaActual] = useState<string | null>(null);
@@ -18,12 +44,20 @@ export default function Header() {
     setTemaActual(resolvedTheme ?? "light");
   }, [theme, systemTheme]);
 
+  // Lista de enlaces con tiempos progresivos
+  const enlaces = [
+    { nombre: "Inicio", ruta: "/" },
+    { nombre: "Galería", ruta: "/galeria" },
+    { nombre: "Ediciones", ruta: "/ediciones" },
+    { nombre: "Servicios", ruta: "/servicios" },
+    { nombre: "Contacto", ruta: "/contacto" },
+  ];
+
   return (
     <header className="fixed top-0 left-0 w-full h-14 md:h-16 px-6 flex justify-between items-center bg-fondoClaro text-textoClaro dark:bg-fondoOscuro dark:text-textoOscuro shadow-md transition-all duration-300 z-50">
-
+      
       {/* Logo animado */}
       <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-        {/* Animación del Logo */}
         <motion.div
           className="w-[40px] md:w-[60px] h-[40px] md:h-[60px] flex items-center justify-center flex-shrink-0"
           animate={{ opacity: [1, 0.9, 1], scale: [1, 1.05, 1] }}
@@ -47,14 +81,14 @@ export default function Header() {
           )}
         </motion.div>
 
-        {/* Animación del texto con efecto de revelado progresivo */}
+        {/* Animación del nombre del proyecto SOLO en PC */}
         <motion.span
           className="text-lg md:text-xl overflow-hidden inline-block"
-          initial={{ width: 0 }} // 🔹 Comienza oculto
-          animate={{ width: "auto" }} // 🔹 Se expande según el tamaño del texto
-          transition={{ duration: 1.5, ease: "easeInOut" }}
+          variants={animacionTitulo}
+          initial="hidden"
+          animate="visible"
           style={{
-            whiteSpace: "nowrap", // 🔹 Mantiene el texto en una sola línea
+            whiteSpace: "nowrap",
             display: "inline-block",
           }}
         >
@@ -62,15 +96,26 @@ export default function Header() {
         </motion.span>
       </Link>
 
-
-{/* Menú en escritorio */}
-<nav className="hidden md:flex gap-6 text-sm">
-  <Link href="/" className="hover:text-acento transition-all duration-300">Inicio</Link>
-  <Link href="/galeria" className="hover:text-acento transition-all duration-300">Galería</Link>
-  <Link href="/ediciones" className="hover:text-acento transition-all duration-300">Ediciones</Link> {/* NUEVA RUTA */}
-  <Link href="/servicios" className="hover:text-acento transition-all duration-300">Servicios</Link>
-  <Link href="/contacto" className="hover:text-acento transition-all duration-300">Contacto</Link>
-</nav>
+      {/* Menú en escritorio con efecto máquina de escribir letra por letra sin superposición */}
+      <nav className="hidden md:flex gap-6 text-sm">
+        {enlaces.map((item, index) => (
+          <motion.div
+            key={index}
+            variants={animacionEscribir(1.5 + enlaces.slice(0, index).reduce((acc, el) => acc + el.nombre.length * 0.08, 0))} 
+            initial="hidden"
+            animate="visible"
+            className="hidden md:flex"
+          >
+            <Link href={item.ruta} className="hover:text-acento transition-all duration-300">
+              {item.nombre.split("").map((char, i) => (
+                <motion.span key={i} variants={letra}>
+                  {char}
+                </motion.span>
+              ))}
+            </Link>
+          </motion.div>
+        ))}
+      </nav>
 
       {/* Botón del menú hamburguesa en móviles */}
       <button
@@ -80,15 +125,18 @@ export default function Header() {
         {menuAbierto ? <X size={28} /> : <Menu size={28} />}
       </button>
 
-      {/* Menú desplegable en móviles */}
-  {/* Menú en móviles */}
-<div className={`fixed inset-0 bg-fondoClaro dark:bg-fondoOscuro flex flex-col items-center justify-center gap-6 text-lg transition-transform duration-300 md:hidden ${menuAbierto ? "translate-x-0" : "translate-x-full"}`}>
-  <Link href="/" className="hover:text-acento transition-all duration-300" onClick={() => setMenuAbierto(false)}>Inicio</Link>
-  <Link href="/galeria" className="hover:text-acento transition-all duration-300" onClick={() => setMenuAbierto(false)}>Galería</Link>
-  <Link href="/ediciones" className="hover:text-acento transition-all duration-300" onClick={() => setMenuAbierto(false)}>Ediciones</Link> {/* NUEVA RUTA */}
-  <Link href="/servicios" className="hover:text-acento transition-all duration-300" onClick={() => setMenuAbierto(false)}>Servicios</Link>
-  <Link href="/contacto" className="hover:text-acento transition-all duration-300" onClick={() => setMenuAbierto(false)}>Contacto</Link>
-</div>
+      {/* Menú en móviles (sin efecto máquina de escribir) */}
+      <div
+        className={`fixed inset-0 bg-fondoClaro dark:bg-fondoOscuro flex flex-col items-center justify-center gap-6 text-lg transition-transform duration-300 md:hidden ${
+          menuAbierto ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {enlaces.map((item, index) => (
+          <Link key={index} href={item.ruta} className="hover:text-acento transition-all duration-300" onClick={() => setMenuAbierto(false)}>
+            {item.nombre}
+          </Link>
+        ))}
+      </div>
     </header>
   );
 }

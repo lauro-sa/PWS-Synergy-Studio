@@ -4,8 +4,8 @@ import { Variants } from "framer-motion";
 
 // 🔹 Animación de aparición desde arriba
 export const animacionDesdeArriba: Variants = {
-  inicial: { opacity: 0, y: -20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  inicial: { opacity: 0, y: -30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 // 🔹 Animación de aparición con escala

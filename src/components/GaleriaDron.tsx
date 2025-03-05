@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ModalImagen from "./ModalImagen";
 import { fotosGaleriaDron } from "@/datos/datosGaleria";
+import { motion } from "framer-motion";
 
 // ✅ Función para ajustar la galería sin animaciones
 const ajustarGaleria = (imagenes: typeof fotosGaleriaDron, columnas: number) => {
@@ -17,6 +18,24 @@ export default function GaleriaDron() {
   const [imagenSeleccionada, setImagenSeleccionada] = useState<string | null>(null);
   const [datosImagen, setDatosImagen] = useState<{ titulo: string; detalles: string; informacion?: string } | null>(null);
   const [imagenesAjustadas, setImagenesAjustadas] = useState(fotosGaleriaDron);
+  const [visible, setVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  // ✅ Detectar si la sección está en pantalla usando Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true); // Se activa la animación solo una vez
+        }
+      },
+      { threshold: 0.3 } // Se activa cuando el 30% de la sección es visible
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+
+    return () => observer.disconnect();
+  }, []);
 
   // ✅ Detecta el tamaño de la pantalla y ajusta las imágenes sin animaciones
   useEffect(() => {
@@ -24,19 +43,22 @@ export default function GaleriaDron() {
       const ancho = window.innerWidth;
       const columnas = ancho >= 1280 ? 4 : ancho >= 768 ? 3 : 2;
 
-      // ✅ Se usa `setTimeout(0)` para forzar el re-render sin animaciones
       setTimeout(() => setImagenesAjustadas(ajustarGaleria(fotosGaleriaDron, columnas)), 0);
     };
 
-    actualizarGaleria(); // Ejecutar en carga
+    actualizarGaleria();
     window.addEventListener("resize", actualizarGaleria);
     return () => window.removeEventListener("resize", actualizarGaleria);
   }, []);
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-2 py-6">
-      <h2 className="text-h2 font-bold text-center mt-10">🚁 Drones</h2>
-
+    <motion.section
+      ref={sectionRef}
+      className="w-full py-1"
+      initial={{ opacity: 0, y: 50 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 1, ease: "easeOut" }}
+    >
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">
         {imagenesAjustadas.map((foto, index) => (
           <div
@@ -85,6 +107,6 @@ export default function GaleriaDron() {
           }}
         />
       )}
-    </section>
+    </motion.section>
   );
 }
